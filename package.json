@@ -1,0 +1,31 @@
+{
+  "name": "datatools",
+  "version": "1.0.0",
+  "description": "Herramienta para analisis de datos",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "dev": "electron . --debug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/ndelgadocic/datatools.git"
+  },
+  "keywords": [
+    "PC",
+    "CIPS",
+    "Filter"
+  ],
+  "author": "Nestor Delgado",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://gitlab.com/ndelgadocic/datatools/issues"
+  },
+  "homepage": "https://gitlab.com/ndelgadocic/datatools#readme",
+  "dependencies": {
+    "async": "^3.2.0",
+    "electron": "^13.0.1",
+    "osenv": "^0.1.5"
+  }
+}
