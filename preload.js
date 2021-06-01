@@ -1,7 +1,15 @@
-// preload.js
+const { contextBridge } = require('electron')
+const osenv = require('osenv')
+const fs = require('fs');
+const readXlsxFile = require('read-excel-file/node');
 
-// All of the Node.js APIs are available in the preload process.
-// It has the same sandbox as a Chrome extension.
+
+
+
+
+
+
+
 window.addEventListener('DOMContentLoaded', () => {
     const replaceText = (selector, text) => {
       const element = document.getElementById(selector)
@@ -13,4 +21,11 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   })
   
-  
+
+
+  contextBridge.exposeInMainWorld('API', {
+    osenv: () => osenv,
+    fs: () => fs,
+    readXlsxFile: () => readXlsxFile,
+  })
+

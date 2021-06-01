@@ -9,11 +9,11 @@ const path = require('path')
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1080,
+    height: 920,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
       enableRemoteModule: true,
       preload: path.join(__dirname, 'preload.js'),
     }
@@ -21,10 +21,10 @@ function createWindow () {
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html');
-  mainWindow.webContents.openDevTools()
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.maximize()
+  mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -47,8 +47,3 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. Tu también puedes ponerlos en archivos separados y requerirlos aquí.
-function getUserHomeFolder(){
-  return osenv.home();
-}

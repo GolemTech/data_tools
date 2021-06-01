@@ -2,27 +2,64 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'"> -->
 
-    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
+<head>
+  <meta charset="UTF-8">
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'"> -->
+<meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://cdnjs.cloudflare.com ">
 
 
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-    message
-    <div id="app">
-      message:  {{ message }}
+  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <link rel="stylesheet" href="./src/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./src/css/main.css">
+  
+  <title>Hello World!</title>
+</head>
+
+<body>
+
+  <div class="container-fluid" id="app">
+    <h1>{{ name }}</h1>
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <canvas id="myChart" ></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <div id="drop-area">
+            <form class="my-form">
+              <p>Arrastre aquí el archivo xlsx a análisar</p>
+              <input type="file" id="fileElem" accept=".xlsx, .csv" onchange="handleFiles(this.files)">
+              <label class="button" for="fileElem">Seleccionar archivo</label>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-    <script src="./src/js/renderer.js"></script>
-  </body>
+  </div>
+
+
+
+
+
+
+
+
+  <script src="./src/js/bootstrap.min.js"></script>
+  <script src="./src/js/vue.min.js"></script>
+  <script src="./src/js/chartjs.js"></script>
+  <script src="./src/js/xlsx.js"></script>
+  <!-- <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script> -->
+
+  <script src="./src/js/chart_drawer.js"></script>
+  <script src="./src/js/renderer.js"></script>
+  <script src="./src/js/read_excel.js"></script>
+
+</body>
+
 </html>
- 
