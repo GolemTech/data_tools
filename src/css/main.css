@@ -1,12 +1,25 @@
 
 
 #drop-area {
+  display: flex;
   border: 2px dashed #ccc;
   border-radius: 20px;
   width: 180px;
   font-family: sans-serif;
-  margin: 100px auto;
+  /* margin: 100px auto; */
   padding: 20px;
+  height: 25vh;
+  align-items: center;
+  justify-content: center;
+}
+/* .card-body{
+  box-shadow: 4px 4px 5px grey;
+  padding: 20px 50px;
+} */
+.card{
+  box-shadow: 5px 5px 10px grey;
+  padding: 20px 50px;
+  margin: 20px 10px;
 }
 #drop-area.highlight {
   border-color: purple;

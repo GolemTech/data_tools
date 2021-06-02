@@ -22,43 +22,48 @@ app = new Vue({
     headers: null,
     sheet_selected: null,
     column_a: null,
-    content: null
+    column_b: null,
+    content: null,
+    index: null
   },
   watch: {
     // whenever question changes, this function will run
     sheet_selected: () => {
       console.log(app.sheet_selected);
+      // app.index = app.content[0]
       get_columns(app.file, app.sheet_selected) 
     },
     content: () => {
       app.headers = app.content[0];
     },
     column_a: () => {
-      console.log(app.column_a);
+      var new_array = []
+      app.content.forEach(element => {
+        new_array.push(element[app.column_a])
+      })
+      new_array.splice(0,1);
+      app.voltaje_on = list2chart(new_array);
+      add_voltaje_on(app.voltaje_on)
+    },
+    column_b: () => {
+      var new_array = []
+      app.content.forEach(element => {
+        new_array.push(element[app.column_b])
+      })
+      new_array.splice(0,1);
+      app.voltaje_off = list2chart(new_array);
+      add_voltaje_off(app.voltaje_off)
     }
 
   }
 });
 
 function uploadFile(file) {
-
-  // app.path = file[0].path
-  console.log(file);
   app.file = file;
-  // readXlsxFile(file[0]).then(function(rows) {
-  //     // `rows` is an array of rows
-  //     // each row being an array of cells.
-  //     console.log(rows);
-  //   })
   readXlsxFile(file[0], { getSheets: true }).then((sheets) => {
     // sheets === [{ name: 'Sheet1' }, { name: 'Sheet2' }]
     app.list_sheets = sheets
   })
-
-
-  // readXlsxFile(file[0], { sheet: 'urbanodosss' }).then((data) => {
-  //   console.log(data);
-  // })
 }
 
 

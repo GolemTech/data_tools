@@ -35,8 +35,8 @@
           <div id="drop-area">
             <form class="my-form">
               <p>Arrastre aquí el archivo xlsx a análisar</p>
-              <input type="file" id="fileElem" accept=".xlsx, .csv" onchange="handleFiles(this.files)">
-              <label class="button" for="fileElem">Seleccionar archivo</label>
+              <!-- <input type="file" id="fileElem" accept=".xlsx, .csv" onchange="handleFiles(this.files)"> -->
+              <!-- <label class="button" for="fileElem">Seleccionar archivo</label> -->
             </form>
           </div>
         </div>
@@ -52,10 +52,20 @@
         </div>
 
         <div class="col-3">
-          <label> <strong>columnas</strong> </label>
+          <label> <strong>Seleccione columna A...</strong> </label>
           <select v-model="column_a">
-            <option v-for="head in headers" v-bind:value="head">
-              {{ head }}
+            <option v-for="(value, index) in headers" v-bind:value="index">
+              {{ value }}
+            </option>
+          </select>
+          </select>
+        </div>
+
+        <div class="col-3">
+          <label> <strong>Seleccione columna B...</strong> </label>
+          <select v-model="column_b">
+            <option v-for="(value, index) in headers" v-bind:value="index">
+              {{ value }}
             </option>
           </select>
           </select>
