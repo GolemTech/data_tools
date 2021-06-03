@@ -1,5 +1,15 @@
 
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+  
 
+.action{
+  display: flex;
+  flex-wrap: wrap;
+}  
 #drop-area {
   display: flex;
   border: 2px dashed #ccc;
@@ -8,7 +18,7 @@
   font-family: sans-serif;
   /* margin: 100px auto; */
   padding: 20px;
-  height: 25vh;
+  height: 15vh;
   align-items: center;
   justify-content: center;
 }

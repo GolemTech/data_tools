@@ -39,39 +39,57 @@
               <!-- <label class="button" for="fileElem">Seleccionar archivo</label> -->
             </form>
           </div>
+
         </div>
 
-        <div class="col-3">
+        <div class="col-3 actions">
           <label> <strong>Lista de hojas</strong> </label>
-          <select v-model="sheet_selected">
+          <select v-model="sheet_selected" class="select">
             <option v-for="sheet in list_sheets" v-bind:value="sheet.name">
               {{ sheet.name }}
             </option>
           </select>
-          </select>
+          <button id="toggleZoomButton">Zoom: Off</button>
+          <button id="resetZoomButton">Reset Zomm</button>
         </div>
 
-        <div class="col-3">
+        <div class="col-3 actions">
           <label> <strong>Seleccione columna A...</strong> </label>
-          <select v-model="column_a">
+          <select v-model="column_a" class="select">
             <option v-for="(value, index) in headers" v-bind:value="index">
               {{ value }}
             </option>
           </select>
-          </select>
+          <div class="row">
+            Seleccione el tamaño de la ventana...
+            <input data-toggle="tooltip" title="Values between 5 - 101" type="range" id="range_a"
+              class="form-control" value="5" min="5" max="" step="2"
+              oninput="this.nextElementSibling.value = this.value">
+            <output>5 </output>
+          </div>
+          <button id="filter_sav_a">Filter</button>
+          <button id="filter_picos_a">Eliminar picos</button>
         </div>
 
-        <div class="col-3">
+        <div class="col-3 actions">
           <label> <strong>Seleccione columna B...</strong> </label>
-          <select v-model="column_b">
+          <select v-model="column_b" class="select">
             <option v-for="(value, index) in headers" v-bind:value="index">
               {{ value }}
             </option>
           </select>
-          </select>
+          <div class="row">
+            Seleccione el tamaño de la ventana...
+            <input data-toggle="tooltip" title="Values between 2 - 101" type="range" id="range_b"
+              class="form-control" value="5" min="5" max="101" step="2"
+              oninput="this.nextElementSibling.value = this.value">
+            <output>5 </output>
+          </div>
+          <button id="filter_sav_b">Filter</button>
+          <button id="filter_picos_b">Eliminar picos</button>
         </div>
 
-        
+
       </div>
 
     </div>
@@ -85,8 +103,11 @@
 
 
   <script src="./src/js/bootstrap.min.js"></script>
-  <script src="./src/js/vue.min.js"></script>
   <script src="./src/js/chartjs.js"></script>
+  <script src="./src/js/hammerjs.js"></script>
+  <script src="./src/js/chartjs-plugin-zoom.js"></script>
+  <script src="./src/js/vue.min.js"></script>
+
   <script src="./src/js/xlsx.js"></script>
   <!-- <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script> -->
 

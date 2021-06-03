@@ -4,8 +4,11 @@ var ctx;
 
 
 var colorChartScheme = {
-    primaryLineColor: "rgb(255, 159, 64)",
-    secondLineCOlor: "#000",
+    primaryLineColor: "#e65100",
+    secondLineColor: "#000",
+
+    primaryFilteredLineColor: "#004d40",
+    secondFilteredLineColor: "#3f51b5",
 };
 
 
@@ -26,7 +29,7 @@ function init_chart() {
             datasets: [
                 {
                     type: "line",
-                    label: "Voltaje On",
+                    label: "Voltaje On filtered",
                     backgroundColor: window.colorChartScheme.primaryLineColor,
                     borderColor: window.colorChartScheme.primaryLineColor,
                     fill: false,
@@ -38,9 +41,35 @@ function init_chart() {
                 },
                 {
                     type: "line",
+                    label: "Voltaje On",
+                    backgroundColor: window.colorChartScheme.primaryFilteredLineColor,
+                    borderColor: window.colorChartScheme.primaryFilteredLineColor,
+                    fill: false,
+                    pointRadius: window.chartlines.pointRadius,
+                    pointHitRadius: window.chartlines.pointHitRadius,
+                    lineTension: window.chartlines.lineTension,
+                    borderWidth: window.chartlines.borderWidth,
+                    data: [],
+                },
+
+
+                {
+                    type: "line",
+                    label: "Voltaje Off filtered",
+                    backgroundColor: window.colorChartScheme.secondLineColor,
+                    borderColor: window.colorChartScheme.secondLineColor,
+                    fill: false,
+                    pointRadius: window.chartlines.pointRadius,
+                    pointHitRadius: window.chartlines.pointHitRadius,
+                    lineTension: window.chartlines.lineTension,
+                    borderWidth: window.chartlines.borderWidth,
+                    data: [],
+                },
+                {
+                    type: "line",
                     label: "Voltaje Off",
-                    backgroundColor: window.colorChartScheme.secondLineCOlor,
-                    borderColor: window.colorChartScheme.secondLineCOlor,
+                    backgroundColor: window.colorChartScheme.secondFilteredLineColor,
+                    borderColor: window.colorChartScheme.secondFilteredLineColor,
                     fill: false,
                     pointRadius: window.chartlines.pointRadius,
                     pointHitRadius: window.chartlines.pointHitRadius,
@@ -53,29 +82,35 @@ function init_chart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: false,
             scales: {
-                x: {
-                    display: true,
-                    type: "linear",
+                xAxes: [{
+                    type: 'linear',
+                    position: 'bottom'
+                }],
+                yAxes: [{
                     ticks: {
+                        beginAtZero: true,
                         reverse: true,
                     }
-                },
-                y: {
-                    display: true,
-                    type: "linear",
-                    ticks: {
-                        reverse: true,
-                    }
-                },
-
+                }]
             },
-            // plugins: {
-            //     legend: {
-            //         position: 'bottom',
-            //     },
-            // }
-
+            plugins: {
+                  zoom: {
+                    zoom: {
+                        pan: {
+                            enabled: true,
+                            // drag: true,
+                            // mode: 'xy',
+                            },
+                       
+                        zoom: {
+                            enabled: true,
+                            // mode: 'xy'
+                        }
+                    }
+                  }
+              },
         }
     });
 }
@@ -112,12 +147,22 @@ function init_chart() {
 
 
 function add_voltaje_on(data) {
+    myChart.data.datasets[1].data = data;
+    myChart.update();
+}
+
+function add_voltaje_on_filtered(data) {
     myChart.data.datasets[0].data = data;
     myChart.update();
 }
 
 function add_voltaje_off(data) {
-    myChart.data.datasets[1].data = data;
+    myChart.data.datasets[3].data = data;
+    myChart.update();
+}
+
+function add_voltaje_off_filtered(data) {
+    myChart.data.datasets[2].data = data;
     myChart.update();
 }
 
@@ -126,6 +171,7 @@ const list2chart = (_data) => {
     for (var i = 0; i < _data.length; i++) {
         data.push({ x: i, y: _data[i] });
     }
-    console.log(data);
     return data;
 };
+
+const dict2list = (data, key = "y") => data.map((object) => object[key]);

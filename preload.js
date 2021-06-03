@@ -1,7 +1,7 @@
 const { contextBridge } = require('electron')
 const osenv = require('osenv')
 const fs = require('fs');
-const readXlsxFile = require('read-excel-file/node');
+const savitzkyGolay = require('ml-savitzky-golay-generalized');
 
 
 
@@ -26,6 +26,6 @@ window.addEventListener('DOMContentLoaded', () => {
   contextBridge.exposeInMainWorld('API', {
     osenv: () => osenv,
     fs: () => fs,
-    readXlsxFile: () => readXlsxFile,
+    savitzkyGolay: () => savitzkyGolay,
   })
 
