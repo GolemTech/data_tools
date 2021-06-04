@@ -39,6 +39,9 @@ app = new Vue({
     },
     content: () => {
       app.headers = app.content[0];
+      myChart.options.annotation.annotations[0].value = 0;
+      myChart.options.annotation.annotations[1].value = app.content.length;
+      // var  closest = closest_array(value, fit_app.input_data.frequency);
     },
     column_a: () => {
       var new_array = []
@@ -48,9 +51,8 @@ app = new Vue({
       new_array.splice(0, 1);
       app.voltaje_on = list2chart(new_array);
       add_voltaje_on(app.voltaje_on)
-      var len = app.voltaje_on.length > 200 ? 200 : app.voltaje_on.length;
-      document.getElementById("range_a").max = len;
-      document.getElementById("range_b").max = len;
+      document.getElementById("range_a").max = app.voltaje_on.length > 300 ? 300 : app.voltaje_on.length;
+
     },
     column_b: () => {
       var new_array = []
@@ -60,7 +62,7 @@ app = new Vue({
       new_array.splice(0, 1);
       app.voltaje_off = list2chart(new_array);
       add_voltaje_off(app.voltaje_off)
-      document.getElementById("range_b").max = app.voltaje_off.length
+      document.getElementById("range_b").max = app.voltaje_off.length > 300 ? 300 : app.voltaje_off.length;
     }
 
   }
@@ -108,12 +110,14 @@ filter_sav_a_button.onclick = function () {
   filter_column_a()
 };
 
+
 function filter_column_a() {
-  var windowSize = input = document.getElementById("range_a").value;
+  var windowSize  = document.getElementById("range_a").value;
+  var grade_filter  = document.getElementById("grade_range_a").value;
   var options = {
     windowSize: parseInt(windowSize),
     derivative: 0,
-    polynomial: 3,
+    polynomial: parseInt(grade_filter),
   };
   let data = dict2list(myChart.data.datasets[1].data);
   let ans = savitzkyGolay(data, 1, options);
@@ -127,11 +131,12 @@ filter_sav_b_button.onclick = function () {
 };
 
 function filter_column_b() {
-  var windowSize = input = document.getElementById("range_b").value;
+  var windowSize = document.getElementById("range_b").value;
+  var grade_filter = document.getElementById("grade_range_b").value;
   var options = {
     windowSize: parseInt(windowSize),
     derivative: 0,
-    polynomial: 3,
+    polynomial: parseInt(grade_filter),
   };
   let data = dict2list(myChart.data.datasets[3].data);
   let ans = savitzkyGolay(data, 1, options);
@@ -143,7 +148,28 @@ selectElement_a.addEventListener('change', (event) => {
   filter_column_a()
 });
 
+const selectElement_grade_a = document.querySelector('#grade_range_a');
+selectElement_grade_a.addEventListener('change', (event) => {
+  filter_column_a()
+});
+
 const selectElement_b = document.querySelector('#range_b');
 selectElement_b.addEventListener('change', (event) => {
   filter_column_b()
 });
+
+const selectElement_grade_b = document.querySelector('#grade_range_b');
+selectElement_grade_b.addEventListener('change', (event) => {
+  filter_column_b()
+});
+
+function borrar_picos(data, prom, error){
+  var band = [prom, prom]
+  var list_data_filter = []
+
+  for (value in data){
+    
+  }
+
+
+}

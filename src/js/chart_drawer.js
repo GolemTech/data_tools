@@ -29,7 +29,7 @@ function init_chart() {
             datasets: [
                 {
                     type: "line",
-                    label: "Voltaje On filtered",
+                    label: "Column A filtered",
                     backgroundColor: window.colorChartScheme.primaryLineColor,
                     borderColor: window.colorChartScheme.primaryLineColor,
                     fill: false,
@@ -41,7 +41,7 @@ function init_chart() {
                 },
                 {
                     type: "line",
-                    label: "Voltaje On",
+                    label: "Column A",
                     backgroundColor: window.colorChartScheme.primaryFilteredLineColor,
                     borderColor: window.colorChartScheme.primaryFilteredLineColor,
                     fill: false,
@@ -55,7 +55,7 @@ function init_chart() {
 
                 {
                     type: "line",
-                    label: "Voltaje Off filtered",
+                    label: "Column B filtered",
                     backgroundColor: window.colorChartScheme.secondLineColor,
                     borderColor: window.colorChartScheme.secondLineColor,
                     fill: false,
@@ -67,7 +67,7 @@ function init_chart() {
                 },
                 {
                     type: "line",
-                    label: "Voltaje Off",
+                    label: "Column B",
                     backgroundColor: window.colorChartScheme.secondFilteredLineColor,
                     borderColor: window.colorChartScheme.secondFilteredLineColor,
                     fill: false,
@@ -96,21 +96,85 @@ function init_chart() {
                 }]
             },
             plugins: {
-                  zoom: {
+                zoom: {
                     zoom: {
                         pan: {
                             enabled: true,
                             // drag: true,
                             // mode: 'xy',
-                            },
-                       
+                        },
+
                         zoom: {
                             enabled: true,
                             // mode: 'xy'
                         }
                     }
-                  }
-              },
+                }
+            },
+            annotation: {
+                drawTime: 'afterDatasetsDraw',
+                annotations: [
+                    {
+                        id: "line1",
+                        type: "line",
+                        borderDash: [5, 7],
+                        mode: "vertical",
+                        scaleID: "x-axis-0",
+                        value: 0,
+                        borderColor: "black",
+                        borderWidth: 3,
+                        label: {
+                            backgroundColor: "orange",
+                            content: `Inicial`,
+                            enabled: true,
+                            yAdjust: 50
+                        },
+                        draggable: true,
+                        onDrag: function (event) {
+
+                        },
+                        onDrag: function (event) {
+                            this.label.content = `Inicial drag`
+                        },
+                        onDragEnd: function (event) {
+                            value = event.subject.config.value;
+                            this.value = value;
+                            var list_index = dict2list(myChart.data.datasets[1].data, "x")
+                            var closest = closest_array(value, list_index);
+                            this.value = closest;
+                            myChart.update()
+                        },
+                    },
+                    {
+                        id: "line2",
+                        type: "line",
+                        borderDash: [5, 7],
+                        mode: "vertical",
+                        scaleID: "x-axis-0",
+                        value: 1,
+                        borderColor: "black",
+                        borderWidth: 3,
+
+                        label: {
+                            backgroundColor: "black",
+                            content: `Final`,
+                            enabled: true,
+                        },
+                        draggable: true,
+                        onDrag: function (event) {
+                            this.label.content = `Final drag`
+                        },
+                        onDragEnd: function (event) {
+                            value = event.subject.config.value;
+                            this.value = value;
+                            var list_index = dict2list(myChart.data.datasets[1].data, "x")
+                            var closest = closest_array(value, list_index);
+                            this.value = closest;
+                            myChart.update()
+                        },
+                    }
+                ]
+            }
         }
     });
 }
@@ -175,3 +239,17 @@ const list2chart = (_data) => {
 };
 
 const dict2list = (data, key = "y") => data.map((object) => object[key]);
+
+function closest_object(goal, key, object) {
+    var closest = object.reduce(function (prev, curr) {
+        return (Math.abs(curr[key] - goal) < Math.abs(prev[key] - goal) ? curr : prev);
+    });
+    return closest
+}
+
+function closest_array(goal, array) {
+    var closest = array.reduce(function (prev, curr) {
+        return (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev);
+    });
+    return closest
+}

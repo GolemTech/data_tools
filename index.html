@@ -60,6 +60,7 @@
               {{ value }}
             </option>
           </select>
+
           <div class="row">
             Seleccione el tamaño de la ventana...
             <input data-toggle="tooltip" title="Values between 5 - 101" type="range" id="range_a"
@@ -67,6 +68,16 @@
               oninput="this.nextElementSibling.value = this.value">
             <output>5 </output>
           </div>
+          <br>
+          <div class="row">
+            Seleccione el grado del filtro...
+            <input data-toggle="tooltip" title="Values between 5 - 101" type="range" id="grade_range_a"
+              class="form-control" value="1" min="1" max="10" step="1"
+              oninput="this.nextElementSibling.value = this.value">
+            <output>1 </output>
+          </div>
+          <br>
+
           <button id="filter_sav_a">Filter</button>
           <button id="filter_picos_a">Eliminar picos</button>
         </div>
@@ -78,6 +89,7 @@
               {{ value }}
             </option>
           </select>
+
           <div class="row">
             Seleccione el tamaño de la ventana...
             <input data-toggle="tooltip" title="Values between 2 - 101" type="range" id="range_b"
@@ -85,6 +97,16 @@
               oninput="this.nextElementSibling.value = this.value">
             <output>5 </output>
           </div>
+          <br>
+          <div class="row">
+            Seleccione el grado del filtro...
+            <input data-toggle="tooltip" title="Values between 5 - 101" type="range" id="grade_range_b"
+              class="form-control" value="1" min="1" max="5" step="1"
+              oninput="this.nextElementSibling.value = this.value">
+            <output>1 </output>
+          </div>
+          <br>
+
           <button id="filter_sav_b">Filter</button>
           <button id="filter_picos_b">Eliminar picos</button>
         </div>
@@ -106,6 +128,8 @@
   <script src="./src/js/chartjs.js"></script>
   <script src="./src/js/hammerjs.js"></script>
   <script src="./src/js/chartjs-plugin-zoom.js"></script>
+  <script src="./src/js/annotations.js"></script>
+  <script src="./src/js/draggable.js"></script>
   <script src="./src/js/vue.min.js"></script>
 
   <script src="./src/js/xlsx.js"></script>
