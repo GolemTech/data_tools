@@ -111,103 +111,12 @@ function init_chart() {
                     }
                 }
             },
-            annotation: {
-                drawTime: 'afterDatasetsDraw',
-                annotations: [
-                    {
-                        id: "line1",
-                        type: "line",
-                        borderDash: [5, 7],
-                        mode: "vertical",
-                        scaleID: "x-axis-0",
-                        value: 0,
-                        borderColor: "black",
-                        borderWidth: 3,
-                        label: {
-                            backgroundColor: "orange",
-                            content: `Inicial`,
-                            enabled: true,
-                            yAdjust: 50
-                        },
-                        draggable: true,
-                        onDrag: function (event) {
-
-                        },
-                        onDrag: function (event) {
-                            this.label.content = `Inicial drag`
-                        },
-                        onDragEnd: function (event) {
-                            value = event.subject.config.value;
-                            this.value = value;
-                            var list_index = dict2list(myChart.data.datasets[1].data, "x")
-                            var closest = closest_array(value, list_index);
-                            this.value = closest;
-                            myChart.update()
-                        },
-                    },
-                    {
-                        id: "line2",
-                        type: "line",
-                        borderDash: [5, 7],
-                        mode: "vertical",
-                        scaleID: "x-axis-0",
-                        value: 1,
-                        borderColor: "black",
-                        borderWidth: 3,
-
-                        label: {
-                            backgroundColor: "black",
-                            content: `Final`,
-                            enabled: true,
-                        },
-                        draggable: true,
-                        onDrag: function (event) {
-                            this.label.content = `Final drag`
-                        },
-                        onDragEnd: function (event) {
-                            value = event.subject.config.value;
-                            this.value = value;
-                            var list_index = dict2list(myChart.data.datasets[1].data, "x")
-                            var closest = closest_array(value, list_index);
-                            this.value = closest;
-                            myChart.update()
-                        },
-                    }
-                ]
-            }
         }
     });
 }
 
-// myChart = new Chart(ctx, {
-//     type: 'line',
-//     data: {
-//         datasets: [{
-//             label: 'Columna A',
-//             data: [],
-//             backgroundColor: "#212121",
-//             borderColor: "#212121",
-//             // borderWidth: 1
-//         },
-//         {
-//             label: 'Columna b',
-//             data: [],
-//             backgroundColor: "#e65100",
-//             borderColor: "#e65100",
-//             // borderWidth: 2
-//         }]
-//     },
-//     options: {
-//         scales: {
-//             x: {
-//                 type: 'linear'
-//             },
-//             y: {
-//                 type: 'linear'
-//             }
-//         }
-//     }
-// });
+
+
 
 
 function add_voltaje_on(data) {
