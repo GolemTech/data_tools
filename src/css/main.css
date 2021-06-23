@@ -71,7 +71,7 @@ p {
   border-radius: 20px;
   width: 100%;
   font-family: sans-serif;
-  margin: 100px auto;
+  /* margin: 100px auto; */
   padding: 20px;
 }
 #drop-area.highlight {

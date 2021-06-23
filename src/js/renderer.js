@@ -3,6 +3,7 @@ const savitzkyGolay = new API.savitzkyGolay;
 // const filePC;
 var zoomDisabled = true;
 var app;
+let reverse = true;
 // var XLSX =  XLSX();
 
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -43,32 +44,43 @@ app = new Vue({
       app.headers = app.content[0];
     },
     column_a: () => {
-      var new_array = []
-      myChart.data.datasets.forEach(dataset => {
-        dataset.data = [];    
-      })
-      myChart.update();
-      app.content.forEach(element => {
-        new_array.push(element[app.column_a])
-      })
-      new_array.splice(0, 1);
-      app.voltaje_on = list2chart(new_array);
-      update_annotations(0, app.voltaje_on.length)
-      add_voltaje_on(app.voltaje_on)
-      document.getElementById("range_a").max = app.voltaje_on.length > 300 ? 300 : app.voltaje_on.length;
-      var initial = average(dict2list(myChart.data.datasets[1].data));
-      document.getElementById("initial_a").value = parseFloat(initial.toFixed(2));
+
+      if (app.column_a) {
+        var new_array = []
+        app.content.forEach(element => {
+          new_array.push(element[app.column_a])
+        })
+        new_array.splice(0, 1);
+        app.voltaje_on = list2chart(new_array);
+
+        
+        add_voltaje_on(app.voltaje_on)
+
+        document.getElementById("range_a").max = app.voltaje_on.length > 300 ? 300 : app.voltaje_on.length;
+        var initial = average(dict2list(myChart.data.datasets[1].data));
+        document.getElementById("initial_a").value = parseFloat(initial.toFixed(2));
+        app.filtered_on = dict2list(app.voltaje_on);
+        update_annotations(0, app.voltaje_on.length)
+      }
 
     },
     column_b: () => {
-      var new_array = []
-      app.content.forEach(element => {
-        new_array.push(element[app.column_b])
-      })
-      new_array.splice(0, 1);
-      app.voltaje_off = list2chart(new_array);
-      add_voltaje_off(app.voltaje_off)
-      document.getElementById("range_b").max = app.voltaje_off.length > 300 ? 300 : app.voltaje_off.length;
+      if (app.column_b) {
+        var new_array = []
+        app.content.forEach(element => {
+          new_array.push(element[app.column_b])
+        })
+        new_array.splice(0, 1);
+        app.voltaje_off = list2chart(new_array);
+
+        update_annotations(0, app.voltaje_off.length)
+        add_voltaje_off(app.voltaje_off)
+
+        document.getElementById("range_b").max = app.voltaje_off.length > 300 ? 300 : app.voltaje_off.length;
+        var initial = average(dict2list(myChart.data.datasets[3].data));
+        document.getElementById("initial_b").value = parseFloat(initial.toFixed(2));
+        app.filtered_off = dict2list(app.voltaje_off);
+      }
     }
 
   }
@@ -104,10 +116,46 @@ buttonZoom.onclick = function () {
   myChart.update()
 };
 
+var reset_filter_a = document.getElementById("reset_filter_a");
+reset_filter_a.onclick = function () {
+  console.log("click a");
+  myChart.data.datasets[0].data = myChart.data.datasets[1].data;
+  app.filtered_on = dict2list(app.voltaje_on)
+  myChart.update()
+};
+
+var reset_filter_b = document.getElementById("reset_filter_b");
+reset_filter_b.onclick = function () {
+  console.log("click b");
+  myChart.data.datasets[2].data = myChart.data.datasets[3].data;
+  app.filtered_off = dict2list(app.voltaje_off)
+  myChart.update()
+};
+
 var resetZoomButton = document.getElementById("resetZoomButton");
 resetZoomButton.onclick = function () {
   // window.chartBode.resetZoom();
   myChart.resetZoom();
+};
+
+var reset_charts = document.getElementById("reset_charts");
+reset_charts.onclick = function () {
+  // window.chartBode.resetZoom();
+  // app.column_a = null
+  // app.column_b = null
+
+  myChart.data.datasets.forEach(dataset => {
+    dataset.data = [];
+
+  })
+  myChart.options.annotation = [];
+  myChart.update();
+  app.column_a = null
+  app.column_b = null
+  app.voltaje_on = null;
+  app.voltaje_off = null;
+  app.filtered_on = null;
+  app.filtered_off = null;
 };
 
 
@@ -118,27 +166,42 @@ filter_sav_a_button.onclick = function () {
 
 
 function filter_column_a() {
-  var windowSize  = document.getElementById("range_a").value;
-  var grade_filter  = document.getElementById("grade_range_a").value;
+  var windowSize = document.getElementById("range_a").value;
+  var grade_filter = document.getElementById("grade_range_a").value;
   var options = {
     windowSize: parseInt(windowSize),
     derivative: 0,
     polynomial: parseInt(grade_filter),
   };
   // let data = dict2list(myChart.data.datasets[0].data) > 0 ?;
-  let data = myChart.data.datasets[0].data.length > 0 ? dict2list(myChart.data.datasets[0].data): dict2list(myChart.data.datasets[1].data);
+  let data = myChart.data.datasets[0].data.length > 0 ? dict2list(myChart.data.datasets[0].data) : dict2list(myChart.data.datasets[1].data);
   let ans = savitzkyGolay(data, 1, options);
   add_voltaje_on_filtered(list2chart(ans))
+
 }
 
 var filter_spike_a_button = document.getElementById("filter_picos_a");
 filter_spike_a_button.onclick = function () {
-  let data = dict2list(myChart.data.datasets[1].data);
-  var prom = document.getElementById("initial_a").value*1
-  var error = document.getElementById("error_a").value/100
-  console.log({data, prom, error});
-  var ans = borrar_picos(data, prom, error)
+  // let data = dict2list(myChart.data.datasets[1].data);
+  let data = app.filtered_on;
+  var prom = document.getElementById("initial_a").value * 1
+  var error = document.getElementById("error_a").value / 100
+  console.log({ data, prom, error });
+  var ans = borrar_picos({ data, start: app.index_min, end: app.index_max, prom, error })
+  app.filtered_on = ans;
   add_voltaje_on_filtered(list2chart(ans))
+  // filter_column_a()
+};
+
+var filter_spike_b_button = document.getElementById("filter_picos_b");
+filter_spike_b_button.onclick = function () {
+  // let data = dict2list(myChart.data.datasets[1].data);
+  let data = app.filtered_off;
+  var prom = document.getElementById("initial_b").value * 1
+  var error = document.getElementById("error_b").value / 100
+  var ans = borrar_picos({ data, start: app.index_min, end: app.index_max, prom, error })
+  app.filtered_off = ans;
+  add_voltaje_off_filtered(list2chart(ans))
   // filter_column_a()
 };
 
@@ -181,41 +244,49 @@ selectElement_grade_b.addEventListener('change', (event) => {
   filter_column_b()
 });
 
-function borrar_picos(data, prom, error) {
+function borrar_picos(params) {
+  let data = params.data;
+  let start = params.start ? params.start : 0;
+  let end = params.end ? params.end : data.length;
+  let prom = params.prom;
+  let error = params.error;
+
   var band = new Array(prom, prom, prom);
   var lim_sup = lim_inf = 0
-  var list_data_filter = new Array();
-  data.forEach((value, index) => {
+  var list_data_filter = data;
 
-      if (!isNumber(value)) data[index] = value = average(band);
 
-      lim_sup = (average(band)) * (1 - error)
-      lim_inf = (average(band)) * (1 + error)
+  for (let index = start; index < end; index++) {
 
-      if (value > 0) data[index] = value = value * -1;
 
-      if (lim_sup > value && value > lim_inf) {
-          band.push(value);
-          band.splice(0, 1)
-          list_data_filter.push(value)
-      } else {
-          var avg = average(band);
-          var rnd = (-1 * (Math.random() * (-15 - 15) + 15)) / 1000;
-          var val = avg + rnd
-          band.push(val)
-          band.splice(0, 1)
-          list_data_filter.push(val)
-      }
-  })
-  return list_data_filter
+    let value = data[index]
+    if (!isNumber(value)) data[index] = value = average(band);
+    lim_sup = (average(band)) * (1 - error)
+    lim_inf = (average(band)) * (1 + error)
+
+    if (value > 0) data[index] = value = value * -1;
+    if (lim_sup > value && value > lim_inf) {
+      band.push(value);
+      band.splice(0, 1)
+      data[index] = value
+    } else {
+      var avg = average(band);
+      var rnd = (-1 * (Math.random() * (-15 - 15) + 15)) / 1000;
+      var val = avg + rnd
+      band.push(val)
+      band.splice(0, 1)
+      data[index] = val
+    }
+  }
+  return data
 }
 
 function isNumber(value) {
   if ((undefined === value) || (null === value)) {
-      return false;
+    return false;
   }
   if (typeof value == 'number') {
-      return true;
+    return true;
   }
   return !isNaN(value - 0);
 }
@@ -228,72 +299,86 @@ function average(arr) {
 
 
 function update_annotations(min = 0, max = 1) {
-  myChart.options.scales.xAxes[0].ticks.min = Math.round(0 - max*0.1);
-  myChart.options.scales.xAxes[0].ticks.max = Math.round(max*0.1 + max);
+  myChart.options.scales.xAxes[0].ticks.min = Math.round(0 - max * 0.03);
+  myChart.options.scales.xAxes[0].ticks.max = Math.round(max * 0.03 + max);
+  app.index_min = min;
+  app.index_max = max;
+  let column_a = document.getElementById("initial_a").value;
+  console.log(column_a);
   window.myChart.options.annotation = {
-      drawTime: 'afterDatasetsDraw',
-      annotations: [
-          {
-              id: "line1",
-              type: "line",
-              borderDash: [5, 7],
-              mode: "vertical",
-              scaleID: "x-axis-0",
-              value: min,
-              borderColor: "black",
-              borderWidth: 3,
-              label: {
-                  backgroundColor: "orange",
-                  content: `Inicial`,
-                  enabled: true,
-                  yAdjust: 50
-              },
-              draggable: true,
-              onDrag: function (event) {
+    drawTime: 'afterDatasetsDraw',
+    annotations: [
+      {
+        id: "line1",
+        type: "line",
+        borderDash: [5, 7],
+        mode: "vertical",
+        scaleID: "x-axis-0",
+        value: min,
+        borderColor: "black",
+        borderWidth: 3,
+        label: {
+          backgroundColor: "orange",
+          content: `Inicial`,
+          enabled: true,
+          yAdjust: 50
+        },
+        draggable: true,
+        onDrag: function (event) {
 
-              },
-              onDrag: function (event) {
-                  this.label.content = `Inicial: ${event.subject.config.value}`
-              },
-              onDragEnd: function (event) {
-                  value = event.subject.config.value;
-                  this.value = value;
-                  var list_index = dict2list(myChart.data.datasets[1].data, "x")
-                  var closest = closest_array(value, list_index);
-                  this.value = closest;
-                  console.log(closest);
-                  myChart.update()
-              },
-          },
-          {
-              id: "line2",
-              type: "line",
-              borderDash: [5, 7],
-              mode: "vertical",
-              scaleID: "x-axis-0",
-              value: max,
-              borderColor: "black",
-              borderWidth: 3,
+        },
+        onDrag: function (event) {
+          this.label.content = `Inicial: ${event.subject.config.value}`
+        },
+        onDragEnd: function (event) {
+          value = event.subject.config.value;
+          this.value = value;
+          var list_index = dict2list(myChart.data.datasets[1].data, "x")
+          var closest = closest_array(value, list_index);
+          this.value = app.index_min = closest;
+          console.log(closest);
+          myChart.update()
+        },
+      },
+      {
+        id: "line2",
+        type: "line",
+        borderDash: [5, 7],
+        mode: "vertical",
+        scaleID: "x-axis-0",
+        value: max,
+        borderColor: "black",
+        borderWidth: 3,
 
-              label: {
-                  backgroundColor: "black",
-                  content: `Final`,
-                  enabled: true,
-              },
-              draggable: true,
-              onDrag: function (event) {
-                  this.label.content = `Final: ${event.subject.config.value}`
-              },
-              onDragEnd: function (event) {
-                  value = event.subject.config.value;
-                  this.value = value;
-                  var list_index = dict2list(myChart.data.datasets[1].data, "x")
-                  var closest = closest_array(value, list_index);
-                  this.value = closest;
-                  myChart.update()
-              },
-          }
-      ]
+        label: {
+          backgroundColor: "black",
+          content: `Final`,
+          enabled: true,
+        },
+        draggable: true,
+        onDrag: function (event) {
+          this.label.content = `Final: ${event.subject.config.value}`
+        },
+        onDragEnd: function (event) {
+          value = event.subject.config.value;
+          this.value = value;
+          var list_index = dict2list(myChart.data.datasets[1].data, "x")
+          var closest = closest_array(value, list_index);
+          this.value = app.index_max = closest;
+          myChart.update()
+        },
+      }
+    ]
   }
   myChart.update()
 }
+
+
+var reverse_axis = document.getElementById("reverse_axis");
+reverse_axis.onclick = function () {
+  // window.chartBode.update()
+  reverse = !reverse;
+  myChart.options.scales.yAxes[0].ticks.reverse = reverse;
+  myChart.update()
+};
+
