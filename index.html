@@ -13,6 +13,8 @@
 
   <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
   <link rel="stylesheet" href="./src/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./src/css/sweetalert2.min.css">
+  <link rel="stylesheet" href="./src/css/dropzone.min.css">
   <link rel="stylesheet" href="./src/css/main.css">
 
   <title>Hello World!</title>
@@ -36,22 +38,24 @@
             <div class="row">
                 <div id="drop-area">
                   <form class="my-form">
-                    <p>Arrastre aquí el archivo xlsx a análizar</p>
+                    <p>Drag here your file xlsx</p>
                     <!-- <input type="file" id="fileElem" accept=".xlsx, .csv" onchange="handleFiles(this.files)"> -->
                     <!-- <label class="button" for="fileElem">Seleccionar archivo</label> -->
+                    <p align="center"  id="filename"></p>
                   </form>
                 </div>
             </div>
             <div class="row">
-              <label> <strong>Lista de hojas</strong> </label>
+              <label> <strong>List sheets</strong> </label>
               <select v-model="sheet_selected" class="select">
                 <option v-for="sheet in list_sheets" v-bind:value="sheet.name">
                   {{ sheet.name }}
                 </option>
               </select>
               <button id="toggleZoomButton">Zoom: Off</button>
-              <button id="resetZoomButton">Reset Zomm</button>
-              <button id="reverse_axis">Invertir eje Y</button>
+              <button id="resetZoomButton">Reset Zoom</button>
+              <button id="reverse_axis">Reverse axis Y</button>
+              <button id="download">Download</button>
               <button id="reset_charts">Clear all</button>
             </div>
           </div>
@@ -59,7 +63,7 @@
           <div class="col-9">
             <div class="row">
               <div class="col-6 actions">
-                <label> <strong>Seleccione columna A...</strong> </label>
+                <label> <strong>Select column A...</strong> </label>
                 <select v-model="column_a" class="select">
                   <option v-for="(value, index) in headers" v-bind:value="index">
                     {{ value }}
@@ -67,14 +71,14 @@
                 </select>
       
                 <div class="row">
-                  Seleccione el tamaño de la ventana...
+                  select the size of the filter window
                   <input data-toggle="tooltip" title="Values between 5 - 51" type="range" id="range_a" class="form-control"
                     value="5" min="5" max="51" step="2" oninput="this.nextElementSibling.value = this.value">
                   <output>5 </output>
                 </div>
 
                 <div class="row">
-                  Seleccione el grado del filtro...
+                  select filter grade
                   <input data-toggle="tooltip" title="Values between 1 - 5" type="range" id="grade_range_a"
                     class="form-control" value="1" min="1" max="5" step="1"
                     oninput="this.nextElementSibling.value = this.value">
@@ -83,21 +87,21 @@
 
                 <div class="row">
                   <div class="col-6">
-                    Valor de arranque
+                    Init value
                     <input data-toggle="tooltip" id="initial_a" class="form-control" value="0"> <output> </output>
                   </div>
                   <div class="col-6">
-                    Porcentaje de error (%)
+                    error rate (%)
                     <input data-toggle="tooltip" id="error_a" class="form-control" type="range" value="10" min="0" max="100"
                       step="1" oninput="this.nextElementSibling.value = this.value"> <output>10 </output>
                   </div>
                 </div>
                 <button id="filter_sav_a">Filter</button>
-                <button id="filter_picos_a">Eliminar picos</button>
+                <button id="filter_picos_a">delete spikes</button>
                 <button id="reset_filter_a">reset data</button>
               </div>
               <div class="col-6 actions">
-                <label> <strong>Seleccione columna B...</strong> </label>
+                <label> <strong>Select column B...</strong> </label>
                 <select v-model="column_b" class="select">
                   <option v-for="(value, index) in headers" v-bind:value="index">
                     {{ value }}
@@ -105,14 +109,14 @@
                 </select>
       
                 <div class="row">
-                  Seleccione el tamaño de la ventana...
+                  select the size of the filter window
                   <input data-toggle="tooltip" title="Values between 5 - 51" type="range" id="range_b" class="form-control"
                     value="5" min="5" max="51" step="2" oninput="this.nextElementSibling.value = this.value">
                   <output>5 </output>
                 </div>
 
                 <div class="row">
-                  Seleccione el grado del filtro...
+                  select filter grade
                   <input data-toggle="tooltip" title="Values between 1 - 5" type="range" id="grade_range_b"
                     class="form-control" value="1" min="1" max="5" step="1"
                     oninput="this.nextElementSibling.value = this.value">
@@ -120,17 +124,17 @@
                 </div>
                 <div class="row">
                   <div class="col-6">
-                    Valor de arranque
+                    init value
                     <input data-toggle="tooltip" id="initial_b" class="form-control" value="0"> <output> </output>
                   </div>
                   <div class="col-6">
-                    Porcentaje de error (%)
+                    error rate  (%)
                     <input data-toggle="tooltip" id="error_b" class="form-control" type="range" value="10" min="0" max="100"
                       step="1" oninput="this.nextElementSibling.value = this.value"> <output>10 </output>
                   </div>
                 </div>
                 <button id="filter_sav_b">Filter</button>
-                <button id="filter_picos_b">Eliminar picos</button>
+                <button id="filter_picos_b">delete spikes</button>
                 <button id="reset_filter_b">reset data</button>
               </div>
             </div>
@@ -143,12 +147,9 @@
 
 
 
-
-
-
-
-
   <script src="./src/js/bootstrap.min.js"></script>
+  <script src="./src/js/dropzone.min.js"></script>
+  <script src="./src/js/sweetalert2.js"></script>
   <script src="./src/js/chartjs.js"></script>
   <script src="./src/js/hammerjs.js"></script>
   <script src="./src/js/chartjs-plugin-zoom.js"></script>

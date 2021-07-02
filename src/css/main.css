@@ -5,7 +5,9 @@
 		-ms-user-select: none;
 	}
   
-
+html {
+  font-size: 0.8em;
+}
 .action{
   display: flex;
   flex-wrap: wrap;

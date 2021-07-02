@@ -1,5 +1,10 @@
 // const readXlsxFile =  new API.readXlsxFile;
 const savitzkyGolay = new API.savitzkyGolay;
+const stringify = new API.stringify;
+const fastcsv = new API.fastcsv;
+const fs = new API.fs;
+const getCurrentWindow = new API.getCurrentWindow;
+
 // const filePC;
 var zoomDisabled = true;
 var app;
@@ -25,7 +30,10 @@ app = new Vue({
     headers: null,
     sheet_selected: null,
     column_a: null,
+    name_a: null,
+    name_a: null,
     column_b: null,
+    name_b: null,
     content: null,
     index: null,
     index_min: null,
@@ -34,6 +42,8 @@ app = new Vue({
   watch: {
     // whenever question changes, this function will run
     sheet_selected: () => {
+      console.log("leyendo...");
+      launch_loading()
       get_columns(app.file, app.sheet_selected)
     },
     list_sheets: () => {
@@ -42,6 +52,7 @@ app = new Vue({
     },
     content: () => {
       app.headers = app.content[0];
+      swal.close()
     },
     column_a: () => {
 
@@ -50,10 +61,12 @@ app = new Vue({
         app.content.forEach(element => {
           new_array.push(element[app.column_a])
         })
-        new_array.splice(0, 1);
+        // new_array.splice(0, 1);
+        app.name_a = new_array.splice(0, 1)[0];
         app.voltaje_on = list2chart(new_array);
 
-        
+        myChart.data.datasets[1].label = app.name_a
+        myChart.data.datasets[0].label = `${app.name_a} filtered`
         add_voltaje_on(app.voltaje_on)
 
         document.getElementById("range_a").max = app.voltaje_on.length > 300 ? 300 : app.voltaje_on.length;
@@ -70,10 +83,12 @@ app = new Vue({
         app.content.forEach(element => {
           new_array.push(element[app.column_b])
         })
-        new_array.splice(0, 1);
+        app.name_b = new_array.splice(0, 1)[0];
         app.voltaje_off = list2chart(new_array);
 
         update_annotations(0, app.voltaje_off.length)
+        myChart.data.datasets[3].label = app.name_b
+        myChart.data.datasets[2].label = `${app.name_b} filtered`
         add_voltaje_off(app.voltaje_off)
 
         document.getElementById("range_b").max = app.voltaje_off.length > 300 ? 300 : app.voltaje_off.length;
@@ -87,6 +102,7 @@ app = new Vue({
 });
 
 function uploadFile(file) {
+
   myChart.clear();
   init_chart();
   app.file = file;
@@ -94,6 +110,7 @@ function uploadFile(file) {
     // sheets === [{ name: 'Sheet1' }, { name: 'Sheet2' }]
     app.list_sheets = sheets
   })
+  document.getElementById("filename").innerHTML = app.file[0].name
 }
 
 
@@ -102,7 +119,9 @@ function get_columns(file, sheet) {
   var columns = []
   readXlsxFile(file[0], { sheet: sheet }).then((data) => {
     app.content = data
+
   })
+
 }
 
 
@@ -140,22 +159,7 @@ resetZoomButton.onclick = function () {
 
 var reset_charts = document.getElementById("reset_charts");
 reset_charts.onclick = function () {
-  // window.chartBode.resetZoom();
-  // app.column_a = null
-  // app.column_b = null
-
-  myChart.data.datasets.forEach(dataset => {
-    dataset.data = [];
-
-  })
-  myChart.options.annotation = [];
-  myChart.update();
-  app.column_a = null
-  app.column_b = null
-  app.voltaje_on = null;
-  app.voltaje_off = null;
-  app.filtered_on = null;
-  app.filtered_off = null;
+  location.reload()
 };
 
 
@@ -182,7 +186,6 @@ function filter_column_a() {
 
 var filter_spike_a_button = document.getElementById("filter_picos_a");
 filter_spike_a_button.onclick = function () {
-  // let data = dict2list(myChart.data.datasets[1].data);
   let data = app.filtered_on;
   var prom = document.getElementById("initial_a").value * 1
   var error = document.getElementById("error_a").value / 100
@@ -195,10 +198,10 @@ filter_spike_a_button.onclick = function () {
 
 var filter_spike_b_button = document.getElementById("filter_picos_b");
 filter_spike_b_button.onclick = function () {
-  // let data = dict2list(myChart.data.datasets[1].data);
   let data = app.filtered_off;
   var prom = document.getElementById("initial_b").value * 1
   var error = document.getElementById("error_b").value / 100
+  console.log({ data, prom, error });
   var ans = borrar_picos({ data, start: app.index_min, end: app.index_max, prom, error })
   app.filtered_off = ans;
   add_voltaje_off_filtered(list2chart(ans))
@@ -219,7 +222,7 @@ function filter_column_b() {
     derivative: 0,
     polynomial: parseInt(grade_filter),
   };
-  let data = dict2list(myChart.data.datasets[3].data);
+  let data = myChart.data.datasets[2].data.length > 0 ? dict2list(myChart.data.datasets[2].data) : dict2list(myChart.data.datasets[3].data);
   let ans = savitzkyGolay(data, 1, options);
   add_voltaje_off_filtered(list2chart(ans))
 }
@@ -382,3 +385,50 @@ reverse_axis.onclick = function () {
   myChart.update()
 };
 
+
+function saveFIle() {
+
+  const content = fileContent();
+  const element = document.createElement("a");
+  const file = new Blob([content], { type: "text/plain" });
+  element.href = URL.createObjectURL(file);
+  element.download = "file.csv";
+  element.click();
+
+}
+
+function fileContent () {
+  let column_a = dict2list(myChart.data.datasets[0].data)
+  column_a.unshift(app.name_a)
+  let column_b = dict2list(myChart.data.datasets[2].data)
+  column_b.unshift(app.name_b)
+  console.log({column_a, column_b});
+
+  let content = ""
+  for (let index = 0; index < column_a.length; index++){
+    const element_a = column_a[index];
+    const element_b = column_b[index];
+    content += `${element_a}, ${element_b}\n`;
+
+  }
+  return content
+}
+
+
+function launch_loading(text) {
+  Swal.fire({
+    title: text || "Un momento por favor!",
+    // html: 'data uploading',// add html attribute if you want or remove
+    allowOutsideClick: false,
+    showCancelButton: false, // There won't be any cancel button
+    showConfirmButton: false, // There won't be any confirm button
+    onBeforeOpen: () => {
+      Swal.showLoading()
+    },
+  });
+}
+
+const download = document.querySelector('#download');
+download.onclick = function () {
+  saveFIle()
+};
