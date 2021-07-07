@@ -1,9 +1,5 @@
-// const readXlsxFile =  new API.readXlsxFile;
 const savitzkyGolay = new API.savitzkyGolay;
-const stringify = new API.stringify;
-const fastcsv = new API.fastcsv;
-const fs = new API.fs;
-const getCurrentWindow = new API.getCurrentWindow;
+
 
 // const filePC;
 var zoomDisabled = true;
