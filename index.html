@@ -5,10 +5,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'"> -->
-  <meta http-equiv="Content-Security-Policy"
-    content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://cdnjs.cloudflare.com ">
+
 
 
   <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
@@ -17,13 +14,12 @@
   <link rel="stylesheet" href="./src/css/dropzone.min.css">
   <link rel="stylesheet" href="./src/css/main.css">
 
-  <title>Hello World!</title>
+  <title>Datatools PC</title>
 </head>
 
 <body>
 
   <div class="container-fluid" id="app">
-    <h1>{{ name }}</h1>
     <div class="row">
       <div class="col-12">
         <div class="card">
@@ -39,24 +35,28 @@
                 <div id="drop-area">
                   <form class="my-form">
                     <p>Drag here your file xlsx</p>
-                    <!-- <input type="file" id="fileElem" accept=".xlsx, .csv" onchange="handleFiles(this.files)"> -->
-                    <!-- <label class="button" for="fileElem">Seleccionar archivo</label> -->
+                    <input type="file" id="fileElem" accept=".xlsx" onchange="handleFiles(this.files)">
+                    <label class="btn btn-dark btn-lg " for="fileElem">Select file</label>
                     <p align="center"  id="filename"></p>
                   </form>
                 </div>
             </div>
             <div class="row">
               <label> <strong>List sheets</strong> </label>
-              <select v-model="sheet_selected" class="select">
+              <select v-model="sheet_selected" class="form-select form-select-lg mb-3">
+                <option selected>...</option>
                 <option v-for="sheet in list_sheets" v-bind:value="sheet.name">
                   {{ sheet.name }}
                 </option>
               </select>
-              <button id="toggleZoomButton">Zoom: Off</button>
-              <button id="resetZoomButton">Reset Zoom</button>
-              <button id="reverse_axis">Reverse axis Y</button>
-              <button id="download">Download</button>
-              <button id="reset_charts">Clear all</button>
+              <div class="btn-group">
+                
+              </div>
+              <button type="button" class="btn btn-dark" id="toggleZoomButton">Zoom: Off</button>
+              <button type="button" class="btn btn-dark" id="resetZoomButton">Reset Zoom</button>
+              <button type="button" class="btn btn-dark" id="reverse_axis">Reverse axis Y</button>
+              <button type="button" class="btn btn-dark" id="download">Download</button>
+              <button type="button" class="btn btn-dark" id="reset_charts">Clear all</button>
             </div>
           </div>
 
@@ -64,13 +64,15 @@
             <div class="row">
               <div class="col-6 actions">
                 <label> <strong>Select column A...</strong> </label>
-                <select v-model="column_a" class="select">
+                
+                <select v-model="column_a" class="form-select form-select-lg mb-3">
+                  <option selected>...</option>
                   <option v-for="(value, index) in headers" v-bind:value="index">
                     {{ value }}
                   </option>
                 </select>
       
-                <div class="row">
+                <div class="row form-group">
                   select the size of the filter window
                   <input data-toggle="tooltip" title="Values between 5 - 51" type="range" id="range_a" class="form-control"
                     value="5" min="5" max="51" step="2" oninput="this.nextElementSibling.value = this.value">
@@ -96,13 +98,14 @@
                       step="1" oninput="this.nextElementSibling.value = this.value"> <output>10 </output>
                   </div>
                 </div>
-                <button id="filter_sav_a">Filter</button>
-                <button id="filter_picos_a">delete spikes</button>
-                <button id="reset_filter_a">reset data</button>
+                <button type="button" class="btn btn-dark btn-lg"  id="filter_sav_a">Filter</button>
+                <button type="button" class="btn btn-dark btn-lg"  id="filter_picos_a">delete spikes</button>
+                <button type="button" class="btn btn-dark btn-lg"  id="reset_filter_a">reset data</button>
               </div>
               <div class="col-6 actions">
                 <label> <strong>Select column B...</strong> </label>
-                <select v-model="column_b" class="select">
+                <select v-model="column_b" class="form-select form-select-lg mb-3">
+                  <option selected>...</option>
                   <option v-for="(value, index) in headers" v-bind:value="index">
                     {{ value }}
                   </option>
@@ -133,9 +136,9 @@
                       step="1" oninput="this.nextElementSibling.value = this.value"> <output>10 </output>
                   </div>
                 </div>
-                <button id="filter_sav_b">Filter</button>
-                <button id="filter_picos_b">delete spikes</button>
-                <button id="reset_filter_b">reset data</button>
+                <button type="button" class="btn btn-dark btn-lg"  id="filter_sav_b">Filter</button>
+                <button type="button" class="btn btn-dark btn-lg"  id="filter_picos_b">delete spikes</button>
+                <button type="button" class="btn btn-dark btn-lg"  id="reset_filter_b">reset data</button>
               </div>
             </div>
 

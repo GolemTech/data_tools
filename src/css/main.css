@@ -12,18 +12,7 @@ html {
   display: flex;
   flex-wrap: wrap;
 }  
-#drop-area {
-  display: flex;
-  border: 2px dashed #ccc;
-  border-radius: 20px;
-  width: 180px;
-  font-family: sans-serif;
-  /* margin: 100px auto; */
-  padding: 20px;
-  height: 15vh;
-  align-items: center;
-  justify-content: center;
-}
+
 /* .card-body{
   box-shadow: 4px 4px 5px grey;
   padding: 20px 50px;
@@ -67,14 +56,17 @@ p {
 }
 
 
-
 #drop-area {
+  display: flex;
   border: 2px dashed #ccc;
   border-radius: 20px;
-  width: 100%;
+  width: 90%;
   font-family: sans-serif;
   /* margin: 100px auto; */
   padding: 20px;
+  height: 15vh;
+  align-items: center;
+  justify-content: center;
 }
 #drop-area.highlight {
   border-color: purple;
@@ -87,6 +79,9 @@ p {
 }
 #gallery {
   margin-top: 10px;
+}
+button {
+  margin: 5px;
 }
 #gallery img {
   width: 120px;
@@ -110,6 +105,6 @@ p {
 }
 
 canvas{
-  height: 50vh !important;
+  height: 47vh !important;
 }
 

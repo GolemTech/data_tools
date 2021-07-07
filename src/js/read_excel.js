@@ -33,12 +33,15 @@ function unhighlight(e) {
 dropArea.addEventListener('drop', handleDrop, false)
 
 function handleDrop(e) {
+   
     let dt = e.dataTransfer
     let files = dt.files
+    console.log(files);
     uploadFile(files)
 }
 
 function handleFiles(files) {
-    ([...files]).forEach(uploadFile)
+    console.log(files);
+    uploadFile(files)
 }
 

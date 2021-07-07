@@ -42,9 +42,18 @@ app = new Vue({
   watch: {
     // whenever question changes, this function will run
     sheet_selected: () => {
-      console.log("leyendo...");
       launch_loading()
-      get_columns(app.file, app.sheet_selected)
+      try {
+        get_columns(app.file, app.sheet_selected)
+      } catch (e) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong!',
+          timer: 1500
+        })
+      }
+      
     },
     list_sheets: () => {
       // app.column_a = "";
@@ -57,44 +66,53 @@ app = new Vue({
     column_a: () => {
 
       if (app.column_a) {
-        var new_array = []
-        app.content.forEach(element => {
-          new_array.push(element[app.column_a])
-        })
-        // new_array.splice(0, 1);
-        app.name_a = new_array.splice(0, 1)[0];
-        app.voltaje_on = list2chart(new_array);
-
-        myChart.data.datasets[1].label = app.name_a
-        myChart.data.datasets[0].label = `${app.name_a} filtered`
-        add_voltaje_on(app.voltaje_on)
-
-        document.getElementById("range_a").max = app.voltaje_on.length > 300 ? 300 : app.voltaje_on.length;
-        var initial = average(dict2list(myChart.data.datasets[1].data));
-        document.getElementById("initial_a").value = parseFloat(initial.toFixed(2));
-        app.filtered_on = dict2list(app.voltaje_on);
-        update_annotations(0, app.voltaje_on.length)
+        try {
+          var new_array = []
+          app.content.forEach(element => {
+            new_array.push(element[app.column_a])
+          })
+          // new_array.splice(0, 1);
+          app.name_a = new_array.splice(0, 1)[0];
+          app.voltaje_on = list2chart(new_array);
+  
+          myChart.data.datasets[1].label = app.name_a
+          myChart.data.datasets[0].label = `${app.name_a} filtered`
+          add_voltaje_on(app.voltaje_on)
+  
+          document.getElementById("range_a").max = app.voltaje_on.length > 300 ? 300 : app.voltaje_on.length;
+          var initial = average(dict2list(myChart.data.datasets[1].data));
+          document.getElementById("initial_a").value = parseFloat(initial.toFixed(2));
+          app.filtered_on = dict2list(app.voltaje_on);
+          update_annotations(0, app.voltaje_on.length)
+        } catch (e) {
+         error();
+        }
+        
       }
 
     },
     column_b: () => {
-      if (app.column_b) {
-        var new_array = []
-        app.content.forEach(element => {
-          new_array.push(element[app.column_b])
-        })
-        app.name_b = new_array.splice(0, 1)[0];
-        app.voltaje_off = list2chart(new_array);
-
-        update_annotations(0, app.voltaje_off.length)
-        myChart.data.datasets[3].label = app.name_b
-        myChart.data.datasets[2].label = `${app.name_b} filtered`
-        add_voltaje_off(app.voltaje_off)
-
-        document.getElementById("range_b").max = app.voltaje_off.length > 300 ? 300 : app.voltaje_off.length;
-        var initial = average(dict2list(myChart.data.datasets[3].data));
-        document.getElementById("initial_b").value = parseFloat(initial.toFixed(2));
-        app.filtered_off = dict2list(app.voltaje_off);
+      try {
+        if (app.column_b) {
+          var new_array = []
+          app.content.forEach(element => {
+            new_array.push(element[app.column_b])
+          })
+          app.name_b = new_array.splice(0, 1)[0];
+          app.voltaje_off = list2chart(new_array);
+  
+          update_annotations(0, app.voltaje_off.length)
+          myChart.data.datasets[3].label = app.name_b
+          myChart.data.datasets[2].label = `${app.name_b} filtered`
+          add_voltaje_off(app.voltaje_off)
+  
+          document.getElementById("range_b").max = app.voltaje_off.length > 300 ? 300 : app.voltaje_off.length;
+          var initial = average(dict2list(myChart.data.datasets[3].data));
+          document.getElementById("initial_b").value = parseFloat(initial.toFixed(2));
+          app.filtered_off = dict2list(app.voltaje_off);
+        }
+      } catch (e) {
+        error();
       }
     }
 
@@ -121,7 +139,6 @@ function get_columns(file, sheet) {
     app.content = data
 
   })
-
 }
 
 
@@ -137,18 +154,27 @@ buttonZoom.onclick = function () {
 
 var reset_filter_a = document.getElementById("reset_filter_a");
 reset_filter_a.onclick = function () {
+try {
   console.log("click a");
   myChart.data.datasets[0].data = myChart.data.datasets[1].data;
   app.filtered_on = dict2list(app.voltaje_on)
   myChart.update()
+} catch (e) {
+  error();
+}
 };
+
 
 var reset_filter_b = document.getElementById("reset_filter_b");
 reset_filter_b.onclick = function () {
-  console.log("click b");
+try {
+  console.log("click a");
   myChart.data.datasets[2].data = myChart.data.datasets[3].data;
   app.filtered_off = dict2list(app.voltaje_off)
   myChart.update()
+} catch (e) {
+  error();
+}
 };
 
 var resetZoomButton = document.getElementById("resetZoomButton");
@@ -170,42 +196,60 @@ filter_sav_a_button.onclick = function () {
 
 
 function filter_column_a() {
-  var windowSize = document.getElementById("range_a").value;
-  var grade_filter = document.getElementById("grade_range_a").value;
-  var options = {
-    windowSize: parseInt(windowSize),
-    derivative: 0,
-    polynomial: parseInt(grade_filter),
-  };
-  // let data = dict2list(myChart.data.datasets[0].data) > 0 ?;
-  let data = myChart.data.datasets[0].data.length > 0 ? dict2list(myChart.data.datasets[0].data) : dict2list(myChart.data.datasets[1].data);
-  let ans = savitzkyGolay(data, 1, options);
-  add_voltaje_on_filtered(list2chart(ans))
+
+
+  try {
+    var windowSize = document.getElementById("range_a").value;
+    var grade_filter = document.getElementById("grade_range_a").value;
+    var options = {
+      windowSize: parseInt(windowSize),
+      derivative: 0,
+      polynomial: parseInt(grade_filter),
+    };
+    // let data = dict2list(myChart.data.datasets[0].data) > 0 ?;
+    let data = myChart.data.datasets[0].data.length > 0 ? dict2list(myChart.data.datasets[0].data) : dict2list(myChart.data.datasets[1].data);
+    let ans = savitzkyGolay(data, 1, options);
+    add_voltaje_on_filtered(list2chart(ans))
+  } catch (e) {
+    error();
+  }
 
 }
 
 var filter_spike_a_button = document.getElementById("filter_picos_a");
 filter_spike_a_button.onclick = function () {
-  let data = app.filtered_on;
-  var prom = document.getElementById("initial_a").value * 1
-  var error = document.getElementById("error_a").value / 100
-  console.log({ data, prom, error });
-  var ans = borrar_picos({ data, start: app.index_min, end: app.index_max, prom, error })
-  app.filtered_on = ans;
-  add_voltaje_on_filtered(list2chart(ans))
+
   // filter_column_a()
+
+  try {
+    let data = app.filtered_on;
+    var prom = document.getElementById("initial_a").value * 1
+    var err = document.getElementById("error_a").value / 100
+    console.log({ data, prom, err });
+    var ans = borrar_picos({ data, start: app.index_min, end: app.index_max, prom, err })
+    app.filtered_on = ans;
+    add_voltaje_on_filtered(list2chart(ans))
+    // filter_column_a()
+  } catch (e) {
+    console.log(e);
+    error()
+  }
 };
 
 var filter_spike_b_button = document.getElementById("filter_picos_b");
 filter_spike_b_button.onclick = function () {
+try {
   let data = app.filtered_off;
   var prom = document.getElementById("initial_b").value * 1
-  var error = document.getElementById("error_b").value / 100
-  console.log({ data, prom, error });
-  var ans = borrar_picos({ data, start: app.index_min, end: app.index_max, prom, error })
+  var err = document.getElementById("error_b").value / 100
+  console.log({ data, prom, err });
+  var ans = borrar_picos({ data, start: app.index_min, end: app.index_max, prom, err })
   app.filtered_off = ans;
   add_voltaje_off_filtered(list2chart(ans))
   // filter_column_a()
+} catch (e) {
+  error();
+}
 };
 
 
@@ -215,16 +259,21 @@ filter_sav_b_button.onclick = function () {
 };
 
 function filter_column_b() {
-  var windowSize = document.getElementById("range_b").value;
-  var grade_filter = document.getElementById("grade_range_b").value;
-  var options = {
-    windowSize: parseInt(windowSize),
-    derivative: 0,
-    polynomial: parseInt(grade_filter),
-  };
-  let data = myChart.data.datasets[2].data.length > 0 ? dict2list(myChart.data.datasets[2].data) : dict2list(myChart.data.datasets[3].data);
-  let ans = savitzkyGolay(data, 1, options);
-  add_voltaje_off_filtered(list2chart(ans))
+
+  try {
+    var windowSize = document.getElementById("range_b").value;
+    var grade_filter = document.getElementById("grade_range_b").value;
+    var options = {
+      windowSize: parseInt(windowSize),
+      derivative: 0,
+      polynomial: parseInt(grade_filter),
+    };
+    let data = myChart.data.datasets[2].data.length > 0 ? dict2list(myChart.data.datasets[2].data) : dict2list(myChart.data.datasets[3].data);
+    let ans = savitzkyGolay(data, 1, options);
+    add_voltaje_off_filtered(list2chart(ans))
+  } catch (e) {
+    error();
+  }
 }
 
 const selectElement_a = document.querySelector('#range_a');
@@ -252,7 +301,7 @@ function borrar_picos(params) {
   let start = params.start ? params.start : 0;
   let end = params.end ? params.end : data.length;
   let prom = params.prom;
-  let error = params.error;
+  let error = params.err;
 
   var band = new Array(prom, prom, prom);
   var lim_sup = lim_inf = 0
@@ -281,7 +330,7 @@ function borrar_picos(params) {
       data[index] = val
     }
   }
-  return data
+  return data 
 }
 
 function isNumber(value) {
@@ -421,7 +470,7 @@ function launch_loading(text) {
     allowOutsideClick: false,
     showCancelButton: false, // There won't be any cancel button
     showConfirmButton: false, // There won't be any confirm button
-    onBeforeOpen: () => {
+    willOpen: () => {
       Swal.showLoading()
     },
   });
@@ -431,3 +480,12 @@ const download = document.querySelector('#download');
 download.onclick = function () {
   saveFIle()
 };
+
+function error() {
+  Swal.fire({
+    icon: 'error',
+    title: 'Oops...',
+    text: 'Something went wrong!',
+    timer: 1500
+  })
+}
