@@ -110,7 +110,7 @@ function uploadFile(file) {
     // sheets === [{ name: 'Sheet1' }, { name: 'Sheet2' }]
     app.list_sheets = sheets
   })
-  document.getElementById("filename").innerHTML = app.file[0].name
+  document.getElementById("filename").innerHTML = app.name = app.file[0].name
 }
 
 
@@ -392,20 +392,19 @@ function saveFIle() {
   const element = document.createElement("a");
   const file = new Blob([content], { type: "text/plain" });
   element.href = URL.createObjectURL(file);
-  element.download = "file.csv";
+  element.download = `${app.file[0].name}_filtered.csv`
   element.click();
-
 }
 
-function fileContent () {
+function fileContent() {
   let column_a = dict2list(myChart.data.datasets[0].data)
   column_a.unshift(app.name_a)
   let column_b = dict2list(myChart.data.datasets[2].data)
   column_b.unshift(app.name_b)
-  console.log({column_a, column_b});
+  console.log({ column_a, column_b });
 
   let content = ""
-  for (let index = 0; index < column_a.length; index++){
+  for (let index = 0; index < column_a.length; index++) {
     const element_a = column_a[index];
     const element_b = column_b[index];
     content += `${element_a}, ${element_b}\n`;
